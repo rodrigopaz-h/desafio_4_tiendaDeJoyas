@@ -17,11 +17,14 @@ const pool = new Pool({
 const createTable = async () => {
     try {
         await pool.query(`
-            CREATE TABLE IF NOT EXISTS posts (
-               id SERIAL PRIMARY KEY,
-               titulo VARCHAR(255),
-               img VARCHAR(1000),
-               descripcion VARCHAR(255)
+            CREATE TABLE IF NOT EXISTS inventario (
+                id SERIAL,
+                nombre VARCHAR(50),
+                categoria
+                VARCHAR(50),
+                metal VARCHAR(50),
+                precio INT,
+                stock INT);
             );
         `);
         console.log('Tabla creada o ya existe.');

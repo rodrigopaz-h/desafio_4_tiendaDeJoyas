@@ -1,9 +1,16 @@
-const express = require('express');
+const { logRouteAccess } =require('../middlewares')
+const { jewelryView } = require('../models/postModel')
+
 const router = express.Router();
-const {
-  getAllJewels,
-  getJewelsWithFilters
-} = require('../controllers/jewelryController');
+
+router.use(logRouteAccess)
+
+app.get('/inventario', async (req, res) => {
+  const inventario = await jewelryView(req.query)
+  res.json(inventario)
+  })
+
+
 
 // Ruta para obtener todas las joyas con HATEOAS
 router.get('/joyas', getAllJewels);

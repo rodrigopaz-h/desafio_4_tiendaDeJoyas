@@ -1,23 +1,31 @@
-// models/postModel.js
-
 const { pool } = require('../db/config');
+const format = require('pg-format');
+const { handleGenerateHATEOAS } = require('../helpers/helpers');
 
-// Función para obtener todos los posts
-const getPosts = async () => {
-    const res = await pool.query('SELECT * FROM posts');
-    return res.rows;
-};
+const jewelryView = async ({ limit = 2, order_by = "id_ASC", offset = 0, page = 1}) => {
+    try {
+    const [field, order] = order_by.split("_")
 
-// Función para agregar un nuevo post
-const addPost = async (titulo, img, descripcion) => {
-    const res = await pool.query(
-        'INSERT INTO posts (titulo, img, descripcion) VALUES ($1, $2, $3) RETURNING *',
-        [titulo, img, descripcion]
-    );
-    return res.rows[0];
-};
+    const SQLrequest = 'SELECT * FROM inventario order by %s %s LIMIT %s OFFSET %s'
+    const formattedQuery = format(SQLrequest, field, order, limit, offset);
+    
+    const { rows: inventario } = await pool.query(formattedQuery)
+    return inventario
 
-module.exports = {
-    getPosts,
-    addPost
-};
+    const data = {
+        rows,
+        count,
+        type: 'client',
+        limit,
+        pages: Math.floor(count / limit),
+        offset: page * limit
+    }
+
+    return handleGenerateHATEOAS(data)
+
+} catch (error) {
+    throw error
+}
+
+
+module.exports = { jewelryView };
